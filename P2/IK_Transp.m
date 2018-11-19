@@ -1,5 +1,5 @@
 function out = IK_Transp(q_ist,position_soll)
-
+q = q_ist;
 
 
 %% Do 128 iterations to estimate the inverse kinematic
@@ -9,13 +9,15 @@ for i=0:127
     % Caution: Rad/Degree!
     % J = Jacobi_Matrix(q);
     
-    % Get transformation matrix
-    % Caution: Rad/Degree!
-    % T = Transformations_Matrix(q);
+    T = TransformationsMatrix(q);
+    J_pose = JacobiMatrix(T);
+    J_position = J_pose(1:3,:,:);   
     
-    % Caclulate the error
+    % Calculate the error
+    e_position = position_soll' - T(1:3,4,6);
   
-    % Calculation step with transpose jacobian
+    % Calculation step with pseudo inverse jacobian
+    q = q + J_position'*e_position;
     
 end
 

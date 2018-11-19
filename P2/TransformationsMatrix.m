@@ -1,7 +1,5 @@
-%% Gelenkwinkel:
-% Je nach Gelenkstellung bitte ändern.
-% q = [ 0 0 0 0 0 0]';
-q = [180 270 90 180 180 0]';
+function T = TransformationsMatrix(q)
+% Transformationsmatrix berechnen
 
 %% Robot parameter (Do not modify!)
 D = [0.2755; 0.41; 0.2073; 0.0741; 0.0741; 0.16];
@@ -39,7 +37,6 @@ A5 = DH(DH_Parameter(5,:));
 A6 = DH(DH_Parameter(6,:));
 
 %% Transformation Hand-Roboter
-% Bitte vervollständigen
 
 T = zeros(4,4,6);
 
@@ -50,14 +47,5 @@ T(:,:,4) = T(:,:,3)*A4;
 T(:,:,5) = T(:,:,4)*A5;
 T(:,:,6) = T(:,:,5)*A6;
 
-T = TransformationsMatrix(q);
+end
 
-%% Jacbobi-Matrix 
-J = JacobiMatrix(T);
-
-%% Inverse Kinematik 
-x = 0.2;
-y = 0.2;
-z = 0.2;
-q_soll_Transp = IK_Transp(q,[x y z]);
-q_soll_Pseudo = IK_Pseudo(q,[x y z]);
