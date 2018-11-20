@@ -1,10 +1,11 @@
 function out = IK_Pseudo(q_ist,position_soll)
 q_soll = q_ist;
-dqMax = 0.0001; % Maximale Änderung eines Gelenkwinkels -> sonst Fehlermeldung
+t_sample = 0.01;
+dqMax = 36/180*pi*t_sample; % Maximale Änderung eines Gelenkwinkels -> sonst Fehlermeldung
 eMaxPosition = 0.01; % Maximale Positionsfehler im kartesischen Raum -> sonst Fehlermeldung
 
 %% Do 128 iterations to estimate the inverse kinematic
-for i=0:2
+for i=0:128
     % Get jacobian for position. This function should be programmed in the
     % task before
     % Caution: Rad/Degree!
@@ -19,7 +20,7 @@ for i=0:2
     J_position = J_pose(1:3,:,:);   
     
     % Calculate the error
-    e_position = position_soll' - T(1:3,4,6);
+    e_position = position_soll - T(1:3,4,6);
   
     % Calculation step with pseudo inverse jacobian
     q_soll = q_soll + J_position'/(J_position*J_position')*e_position;

@@ -1,7 +1,9 @@
 function P = P_Interp(P_start, P_soll, v , a)
 % lineare Interpolation der Position im kartesischen Raum mit
 % Geschwindigkeits und Beschleunigungsberücksichtigung
-    
+% P_start P_soll 3x1
+% P Nx3
+
     t_sample = 0.01; % Abtastzeit in s
 
     % Gesamtweg
@@ -16,6 +18,19 @@ function P = P_Interp(P_start, P_soll, v , a)
     % Nullbeschleunigungsweg/-zeit
     t_null = (p_ges-p_acc-p_dec)/v;
     p_null = t_null*v;
+    
+    % Sonderfall kurze Distanzen
+    if t_null<0
+        t_acc = t_acc + 0.5*t_null; t_dec = t_acc;
+        t_null = 0;
+        v = a*t_acc;
+        
+        % Beschleunigungs-/Abbremsweg
+        p_acc = 0.5*a*t_acc^2; p_dec = p_acc;
+        
+        % Nullbeschleunigungsweg
+        p_null = 0;
+    end
     
     % Zeitvektor + prealloc
     t_sum = t_acc + t_dec + t_null;    
@@ -38,6 +53,6 @@ function P = P_Interp(P_start, P_soll, v , a)
     P(end+1) =  p_ges;
     
     % In 3D umrechnen
-    P = repmat(P_start,length(P),1) + P'*((P_soll-P_start)./p_ges);
+    P = repmat(P_start',length(P),1) + P'*((P_soll'-P_start')./p_ges);
     
 end
